@@ -1,0 +1,2750 @@
+openapi: 3.0.0
+
+info:
+  title: Five a LIVE API
+  description: description
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:80/api
+    description: "ローカル環境"
+
+tags:
+  - name: Admin
+    description: アドミンユーザーに関するAPI
+  - name: Employee
+    description: 社員に関するAPI
+  - name: Dashboard
+    description: ダッシュボードに関するAPI
+  - name: Department
+    description: 部署に関するAPI
+  - name: SurveyQuestionCategory
+    description: アンケート設問カテゴリーに関するAPI
+  - name: Survey
+    description: アンケートに関するAPI
+  - name: MainSurvey
+    description: メインアンケートに関するAPI
+  - name: MonthlySurvey
+    description: マンスリーアンケートに関するAPI
+  - name: Record
+    description: カルテに関するAPI
+  - name: Report
+    description: 社内報に関するAPI
+  - name: Chart
+    description: グラフに関するAPI
+  - name: Comment
+    description: コメントに関するAPI
+  - name: Goal
+    description: 目標設定に関するAPI
+  - name: Plan
+    description: 施策に関するAPI
+
+paths:
+  /admins:
+    post:
+      tags:
+        - Admin
+      summary: アドミンユーザーを作成
+      description: アドミンユーザーを作成する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: メールアドレス
+                company_id:
+                  type: integer
+                  description: 会社ID
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  email:
+                    type: string
+                    description: メールアドレス
+                  company_id:
+                    type: integer
+                    description: 会社ID
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /login:
+    get:
+      tags:
+        - Admin
+      summary: ログイン
+      description: ログインする
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: トークン
+                  status:
+                    type: string
+                    description: ステータス
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Admin
+      summary: ログイン
+      description: ログインする
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: メールアドレス
+                password:
+                  type: string
+                  description: パスワード
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: トークン
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /change-password/{id}:
+    put:
+      tags:
+        - Admin
+      summary: パスワード変更
+      description: パスワードを変更する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID
+          schema:
+            type: integer
+        - name: token
+          in: query
+          required: true
+          description: トークン
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: パスワード
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  email:
+                    type: string
+                    description: メールアドレス
+                  password:
+                    type: string
+                    description: パスワード
+                  company_id:
+                    type: integer
+                    description: 会社ID
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /survey-questions/{survey_term_id}:
+    get:
+      tags:
+        - Survey
+      summary: アンケート設問取得
+      description: アンケートの設問を取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: アンケートID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    question_content_id:
+                      type: integer
+                      description: 設問ID
+                    question:
+                      type: string
+                      description: 設問
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /main-survey-questions:
+    get:
+      tags:
+        - MainSurvey
+      summary: メインアンケート設問一覧取得
+      description: メインアンケートの設問一覧を取得する
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  questions:
+                    type: array
+                    description: 設問
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: ID
+                        question:
+                          type: string
+                          description: 質問
+                        question_content_id:
+                          type: integer
+                          description: 設問ID
+                        question_category_id:
+                          type: integer
+                          description: 設問カテゴリーID
+                        created_at:
+                          type: string
+                          description: 作成日時
+                        updated_at:
+                          type: string
+                          description: 更新日時
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /main-survey-answers:
+    post:
+      tags:
+        - MainSurvey
+      summary: メインアンケート回答を作成
+      description: メインアンケート回答を作成する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_id:
+                  type: integer
+                  description: 社員ID
+                department_id:
+                  type: integer
+                  description: 部署ID
+                age:
+                  type: integer
+                  description: 年齢
+                gender:
+                  type: integer
+                  description: 性別
+                years_of_service:
+                  type: integer
+                  description: 勤続年数
+                survey_question_id:
+                  type: integer
+                  description: 質問ID
+                answer:
+                  type: integer
+                  description: 回答
+                comment:
+                  type: string
+                  description: コメント
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  employee_id:
+                    type: integer
+                    description: 社員ID
+                  survey_question_id:
+                    type: integer
+                    description: 質問ID
+                  answer:
+                    type: integer
+                    description: 回答
+                  comment:
+                    type: string
+                    description: コメント
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /main-survey-status/{id}:
+    get:
+      tags:
+        - MainSurvey
+      summary: メインアンケート回答状況取得
+      description: メインアンケートの回答状況を取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: メインアンケートID
+          schema:
+            type: integer
+        - name: company_id
+          in: query
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  employee_id:
+                    type: integer
+                    description: 社員ID
+                  status:
+                    type: string
+                    description: ステータス
+                  response_rate:
+                    type: number
+                    description: 回答率
+                  next_survey_date:
+                    type: string
+                    description: 次回アンケート日
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /main-surveys:
+    post:
+      tags:
+        - MainSurvey
+      summary: メインアンケート作成
+      description: メインアンケートを作成する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company_id:
+                  type: integer
+                  description: 会社ID
+                survey_category_id:
+                  type: integer
+                  description: カテゴリーID
+                start_date:
+                  type: string
+                  description: 開始日
+                response_period:
+                  type: integer
+                  description: 回答期間
+                frequency:
+                  type: integer
+                  description: 頻度
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  company_id:
+                    type: integer
+                    description: 会社ID
+                  survey_category_id:
+                    type: integer
+                    description: カテゴリーID
+                  start_date:
+                    type: string
+                    description: 開始日
+                  response_period:
+                    type: integer
+                    description: 回答期間
+                  frequency:
+                    type: integer
+                    description: 頻度
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /main-surveys-setting/{id}:
+    put:
+      tags:
+        - MainSurvey
+      summary: メインアンケート制御
+      description: メインアンケートの制御を行う
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: メインアンケートID
+          schema:
+            type: integer
+        - name: company_id
+          in: query
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  description: ステータス
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  company_id:
+                    type: integer
+                    description: 会社ID
+                  survey_category_id:
+                    type: integer
+                    description: カテゴリーID
+                  status:
+                    type: integer
+                    description: ステータス
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /monthly-surveys/{company_id}:
+    get:
+      tags:
+        - MonthlySurvey
+      summary: マンスリーアンケート一覧取得
+      description: マンスリーアンケートの一覧を取得する
+      parameters:
+        - name: company_id
+          in: path
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  next_survey_date:
+                    type: string
+                    description: 次回アンケート日
+                  main_survey_term_id:
+                    type: integer
+                    description: メインアンケートID
+                  present:
+                    type: array
+                    description: 現在公開中のアンケート
+                    items:
+                      type: object
+                      properties:
+                        survey_term_id:
+                          type: integer
+                          description: アンケートID
+                        start_date:
+                          type: string
+                          description: アンケート開始日
+                        target:
+                          type: string
+                          description: 対象
+                        response_ratio:
+                          type: number
+                          description: 回答率
+                  next:
+                    type: array
+                    description: 公開予定のアンケート
+                    items:
+                      type: object
+                      properties:
+                        survey_term_id:
+                          type: integer
+                          description: アンケートID
+                        start_date:
+                          type: string
+                          description: アンケート開始日
+                        target:
+                          type: string
+                          description: 対象
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /monthly-surveys/{id}:
+    get:
+      tags:
+        - MonthlySurvey
+      summary: マンスリーアンケート取得
+      description: マンスリーアンケートを取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: アンケートID
+          schema:
+            type: integer
+        - name: company_id
+          in: query
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  company_id:
+                    type: integer
+                    description: 会社ID
+                  survey_category_id:
+                    type: integer
+                    description: アンケートカテゴリーID
+                  survey_title:
+                    type: string
+                    description: タイトル
+                  target:
+                    type: string
+                    description: 対象
+                  survey_date:
+                    type: string
+                    description: アンケート日
+                  response_period:
+                    type: integer
+                    description: 回答期間
+                  frequency:
+                    type: integer
+                    description: 頻度
+                  questions:
+                    type: array
+                    description: 設問
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: ID
+                        question:
+                          type: string
+                          description: 設問
+                        question_content_id:
+                          type: integer
+                          description: 設問ID
+                        question_category_id:
+                          type: integer
+                          description: 設問カテゴリーID
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+    post:
+      tags:
+        - MonthlySurvey
+      summary: マンスリーアンケート作成
+      description: マンスリーアンケートを作成する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company_id:
+                  type: integer
+                  description: 会社ID
+                survey_category_id:
+                  type: integer
+                  description: アンケートカテゴリーID
+                questions:
+                  type: array
+                  description: 設問
+                  items:
+                    type: object
+                    properties:
+                      question:
+                        type: string
+                        description: 質問
+                      question_category_id:
+                        type: integer
+                        description: 設問カテゴリーID
+                start_date:
+                  type: string
+                  description: 開始日
+                response_period:
+                  type: integer
+                  description: 回答期間
+                frequency:
+                  type: integer
+                  description: 頻度
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  company_id:
+                    type: integer
+                    description: 会社ID
+                  survey_category_id:
+                    type: integer
+                    description: アンケートカテゴリーID
+                  questions:
+                    type: array
+                    description: 設問
+                    items:
+                      type: object
+                      properties:
+                        question:
+                          type: string
+                          description: 質問
+                        question_category_id:
+                          type: integer
+                          description: 設問カテゴリーID
+                  start_date:
+                    type: string
+                    description: 開始日
+                  response_period:
+                    type: integer
+                    description: 回答期間
+                  frequency:
+                    type: integer
+                    description: 頻度
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /monthly-survey-questions/{id}:
+    get:
+      tags:
+        - MonthlySurvey
+      summary: マンスリーアンケート設問取得
+      description: マンスリーアンケートの設問を取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: マンスリーアンケートID
+          schema:
+            type: integer
+        - name: company_id
+          in: query
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  questions:
+                    type: array
+                    description: 設問
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: ID
+                        question:
+                          type: string
+                          description: 質問
+                        question_content_id:
+                          type: integer
+                          description: 設問ID
+                        question_category_id:
+                          type: integer
+                          description: 設問カテゴリーID
+                        created_at:
+                          type: string
+                          description: 作成日時
+                        updated_at:
+                          type: string
+                          description: 更新日時
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+    put:
+      tags:
+        - MonthlySurvey
+      summary: マンスリーアンケート設問更新
+      description: マンスリーアンケートの設問を更新する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: マンスリーアンケートID
+          schema:
+            type: integer
+        - name: company_id
+          in: query
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                  description: 質問
+                question_category_id:
+                  type: integer
+                  description: 設問カテゴリーID
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  questions:
+                    type: array
+                    description: 設問
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: ID
+                        question:
+                          type: string
+                          description: 質問
+                        question_content_id:
+                          type: integer
+                          description: 設問ID
+                        question_category_id:
+                          type: integer
+                          description: 設問カテゴリーID
+                        created_at:
+                          type: string
+                          description: 作成日時
+                        updated_at:
+                          type: string
+                          description: 更新日時
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+    delete:
+      tags:
+        - MonthlySurvey
+      summary: マンスリーアンケート設問削除
+      description: マンスリーアンケートの設問を削除する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: マンスリーアンケートID
+          schema:
+            type: integer
+        - name: company_id
+          in: query
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  questions:
+                    type: array
+                    description: 設問
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: ID
+                        question:
+                          type: string
+                          description: 質問
+                        question_content_id:
+                          type: integer
+                          description: 設問ID
+                        question_category_id:
+                          type: integer
+                          description: 設問カテゴリーID
+                        created_at:
+                          type: string
+                          description: 作成日時
+                        updated_at:
+                          type: string
+                          description: 更新日時
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /monthly-survey-answers:
+    post:
+      tags:
+        - MonthlySurvey
+      summary: マンスリーアンケート回答作成
+      description: マンスリーアンケート回答を作成する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_id:
+                  type: integer
+                  description: 社員ID
+                department_id:
+                  type: integer
+                  description: 部署ID
+                age:
+                  type: integer
+                  description: 年齢
+                gender:
+                  type: integer
+                  description: 性別
+                years_of_service:
+                  type: integer
+                  description: 勤続年数
+                default_answers: ##TODO: ここってデフォルトの設問の回答って2択？それとも複数選択？integer使えるならenpsも含められる
+                  type: array
+                  description: 回答
+                  items:
+                    type: object
+                    properties:
+                      question_id:
+                        type: integer
+                        description: 質問ID
+                      answer:
+                        type: integer
+                        description: 回答
+                additional_answers:
+                  type: array
+                  description: 回答
+                  items:
+                    type: object
+                    properties:
+                      question:
+                        type: string
+                        description: 質問
+                      answer:
+                        type: boolean
+                        description: 回答
+                comment:
+                  type: string
+                  description: コメント
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  employee_id:
+                    type: integer
+                    description: 社員ID
+                  default_answers:
+                    type: array
+                    description: 回答
+                    items:
+                      type: object
+                      properties:
+                        question_id:
+                          type: integer
+                          description: 質問ID
+                        answer:
+                          type: integer
+                          description: 回答
+                  additional_answers:
+                    type: array
+                    description: 回答
+                    items:
+                      type: object
+                      properties:
+                        question:
+                          type: string
+                          description: 質問
+                        answer:
+                          type: boolean
+                          description: 回答
+                  comment:
+                    type: string
+                    description: コメント
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /monthly-surveys-status/{id}:
+    get:
+      tags:
+        - MonthlySurvey
+      summary: マンスリーアンケート回答状況取得
+      description: マンスリーアンケートの回答状況を取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: アンケートID
+          schema:
+            type: integer
+        - name: company_id
+          in: query
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  employee_id:
+                    type: integer
+                    description: 社員ID
+                  status:
+                    type: string
+                    description: ステータス
+                  response_rate:
+                    type: number
+                    description: 回答率
+                  next_survey_date:
+                    type: string
+                    description: 次回アンケート日
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /monthly-surveys-setting/{id}:
+    put:
+      tags:
+        - MonthlySurvey
+      summary: マンスリーアンケート制御
+      description: マンスリーアンケートの制御を行う
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: アンケートID
+          schema:
+            type: integer
+        - name: company_id
+          in: query
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  description: ステータス
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  company_id:
+                    type: integer
+                    description: 会社ID
+                  survey_category_id:
+                    type: integer
+                    description: カテゴリーID
+                  status:
+                    type: integer
+                    description: ステータス
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /companies/{company_id}/departments:
+    get:
+      tags:
+        - Department
+      summary: 部署取得
+      description: 部署を取得する
+      parameters:
+        - name: company_id
+          in: path
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    department_id:
+                      type: integer
+                      description: 部署ID
+                    department_name:
+                      type: string
+                      description: 部署名
+                    total:
+                      type: integer
+                      description: 人数
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /employees:
+    get: ##TODO: ここってgetいる？
+      tags:
+        - Employee
+      summary: 社員一覧取得
+      description: 社員の一覧を取得する
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  email:
+                    type: string
+                    description: メールアドレス
+        "400":
+          description: Bad Request'
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Employee
+      summary: 社員を新規作成
+      description: 社員を作成する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: メールアドレス
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  email:
+                    type: string
+                    description: メールアドレス
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /reports:
+    post:
+      tags:
+        - Report
+      summary: 社内報を新規作成
+      description: 社内報を作成する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                survey_category_id:
+                  type: integer
+                  description: カテゴリーID
+                improvement_point:
+                  type: string
+                  description: 改善点
+                improvement_selected_reason:
+                  type: string
+                  description: 改善点選定理由
+                charts:
+                  type: array
+                  description: グラフ
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: ID
+                      title:
+                        type: string
+                        description: タイトル
+                      created_at:
+                        type: string
+                        description: 作成日時
+                      updated_at:
+                        type: string
+                        description: 更新日時
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  survey_category_id:
+                    type: integer
+                    description: カテゴリーID
+                  improvement_point:
+                    type: string
+                    description: 改善点
+                  improvement_selected_reason:
+                    type: string
+                    description: 改善点選定理由
+                  charts:
+                    type: array
+                    description: グラフ
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: ID
+                        title:
+                          type: string
+                          description: タイトル
+                        created_at:
+                          type: string
+                          description: 作成日時
+                        updated_at:
+                          type: string
+                          description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /reports/{id}:
+    get:
+      tags:
+        - Report
+      summary: 社内報取得
+      description: 社内報を取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID
+          schema:
+            type: integer
+        - name: company_id
+          in: query
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  survey_title:
+                    type: string
+                    description: タイトル
+                  improvement_point:
+                    type: string
+                    description: 改善項目
+                  improvement_goal:
+                    type: number
+                    description: 目標
+                  improvement_selected_reason:
+                    type: string
+                    description: 改善点選定理由
+                  improvement_plan:
+                    type: string
+                    description: 施策
+                  total_average:
+                    type: number
+                    description: 総合平均
+                  charts:
+                    type: array
+                    description: グラフ
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: ID
+                        title:
+                          type: string
+                          description: タイトル
+                        created_at:
+                          type: string
+                          description: 作成日時
+                        updated_at:
+                          type: string
+                          description: 更新日時
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /reports/{id}/reactions:
+    get:
+      tags:
+        - Report
+      summary: 社内報リアクション取得
+      description: 社内報に対するリアクションを取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID
+          schema:
+            type: integer
+        - name: company_id
+          in: query
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  report_id:
+                    type: integer
+                    description: 社内報ID
+                  reaction_id:
+                    type: integer
+                    description: リアクションID
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Report
+      summary: 社内報リアクション
+      description: 社内報に対するリアクションを行う
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID
+          schema:
+            type: integer
+        - name: company_id
+          in: query
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                report_id:
+                  type: integer
+                  description: 社内報ID
+                reaction_id:
+                  type: integer
+                  description: リアクションID
+                employee_id:
+                  type: integer
+                  description: 社員ID
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  report_id:
+                    type: integer
+                    description: 社内報ID
+                  reaction_id:
+                    type: integer
+                    description: リアクションID
+                  employee_id:
+                    type: integer
+                    description: 社員ID
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /records/{company_id}:
+    get:
+      tags:
+        - Record
+      summary: カルテ一覧取得
+      description: カルテの一覧を取得する
+      parameters:
+        - name: company_id
+          in: path
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  description: ページネーションに対応
+                  type: array
+                  items:
+                    type: object
+                    description: 12回分のメインアンケート表示
+                    properties:
+                      survey_term_id:
+                        type: integer
+                        description: アンケートID
+                      year_month:
+                        type: string
+                        description: アンケート実施年月
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /dashboard/{company_id}:
+    get:
+      tags:
+        - Dashboard
+      summary: ダッシュボード取得
+      description: ダッシュボードを取得する
+      parameters:
+        - name: company_id
+          in: path
+          required: true
+          description: 会社ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  survey_term_id:
+                    type: integer
+                    description: アンケートID
+                  status:
+                    type: string
+                    description: アンケート実施状況
+                  response_rate:
+                    type: number
+                    description: 回答率
+                  next_survey_date:
+                    type: string
+                    description: 次回アンケート日
+                  overall_score:
+                    type: number
+                    description: 総合スコア
+                  goal:
+                    type: string
+                    description: 目標
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /records/info/{survey_term_id}:
+    get:
+      tags:
+        - Record
+      summary: カルテ取得
+      description: カルテを取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: メインアンケートID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  survey_title:
+                    type: string
+                    description: タイトル
+                  target:
+                    type: string
+                    description: 対象
+                  survey_date:
+                    type: string
+                    description: アンケート日
+                  response_period:
+                    type: integer
+                    description: 回答期間
+                  frequency:
+                    type: integer
+                    description: 頻度
+                  positive_point:
+                    type: string
+                    description: 良かった点
+                  improvement_point:
+                    type: string
+                    description: 改善点
+                  response_rate:
+                    type: number
+                    description: 回答率
+                  question_categories:
+                    type: array
+                    description: 設問カテゴリー
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: ID
+                        category:
+                          type: string
+                          description: 設問カテゴリー
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /survey-question-categories:
+    get:
+      tags:
+        - SurveyQuestionCategory
+      summary: 設問カテゴリー一覧取得
+      description: 設問カテゴリーの一覧を取得する
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  category:
+                    type: string
+                    description: カテゴリー
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /charts/enps/pie/{survey_term_id}:
+    get:
+      tags:
+        - Chart
+      summary: ENPSチャート取得
+      description: ENPSチャートを取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: アンケートID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    label:
+                      type: string
+                      description: ラベル
+                    value:
+                      type: number
+                      description: 個数
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /charts/enps/transition/{survey_term_id}:
+    get:
+      tags:
+        - Chart
+      summary: ENPS推移チャート取得
+      description: ENPS推移チャートを取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: アンケートID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    month:
+                      type: string
+                      description: 年月
+                    enps:
+                      type: number
+                      description: ENPS
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /charts/question_category/transition/{survey_term_id}:
+    get:
+      tags:
+        - Chart
+      summary: 16カテゴリー合計推移チャート取得
+      description: 16カテゴリー合計推移チャートを取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: アンケートID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    month:
+                      type: string
+                      description: 年月
+                    total:
+                      type: number
+                      description: 総合点（小数点第2位まで表示）
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /charts/question/ratio/{survey_term_id}/{question_category_id}:
+    get:
+      tags:
+        - Chart
+      summary: 設問割合チャート取得
+      description: 設問割合チャートを取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: アンケートID
+          schema:
+            type: integer
+        - name: question_category_id
+          in: path
+          required: true
+          description: カテゴリーID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  question:
+                    type: string
+                    description: 質問
+                  "1. そう思わない":
+                    type: number
+                    description: 1. そう思わない
+                  "2. あまりそう思わない":
+                    type: number
+                    description: 2. あまりそう思わない
+                  "3. どちらとも言えない":
+                    type: number
+                    description: 3. どちらとも言えない
+                  "4. 少しそう思う":
+                    type: number
+                    description: 4. 少しそう思う
+                  "5. そう思う":
+                    type: number
+                    description: 5. そう思う
+                  平均スコア:
+                    type: number
+                    description: 平均スコア
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /attribute/heatmap/{survey_term_id}:
+    get:
+      tags:
+        - Chart
+      summary: 16の設問項目と属性の相関ヒートマップ
+      description: 16の設問項目と属性の相関ヒートマップを取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: メインアンケートID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    attribute:
+                      type: string
+                      description: 属性
+                    data:
+                      type: array
+                      description: データ
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: 属性の項目
+                          data:
+                            type: array
+                            description: データ
+                            items:
+                              type: object
+                              properties:
+                                x:
+                                  type: string
+                                  description: 16の設問項目
+                                y:
+                                  type: number
+                                  description: 値
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /charts/question_category/treemap/{survey_term_id}:
+    get:
+      tags:
+        - Chart
+      summary: 16カテゴリーと属性の相関ヒートマップ
+      description: 16カテゴリーと属性の相関ヒートマップを取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: メインアンケートID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: 項目
+                  data:
+                    type: array
+                    description: データ
+                    items:
+                      type: object
+                      properties:
+                        x:
+                          type: string
+                          description: 属性の項目
+                        y:
+                          type: number
+                          description: 値
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /charts/question-type/transition/{survey_term_id}:
+    get:
+      tags:
+        - Chart
+      summary: 質問タイプ推移チャート取得
+      description: 質問タイプ推移チャートを取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: アンケートID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  month:
+                    type: string
+                    description: 年月
+                  "組織状態":
+                    type: number
+                    description: スコア
+                  "従業員エンゲージメント":
+                    type: number
+                    description: スコア
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /charts/previous-company/comparison/{survey_term_id}:
+    get:
+      tags:
+        - Chart
+      summary: 前回と他社比較チャート取得
+      description: 前回と他社比較チャートを取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: メインアンケートID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    data-type:
+                      type: string
+                      description: 平均値 or 偏差値
+                    data:
+                      type: array
+                      description: データ
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: 項目（前回比、他社比）
+                          data:
+                            type: array
+                            description: データ
+                            items:
+                              type: object
+                              properties:
+                                x:
+                                  type: string
+                                  description: 16の設問項目
+                                y:
+                                  type: number
+                                  description: 値
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /comments/{survey_term_id}:
+    get:
+      tags:
+        - Comment
+      summary: コメント一覧取得
+      description: コメントの一覧を取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: メインアンケートID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    description: 日付
+                  survey_category:
+                    type: string
+                    description: アンケートカテゴリー
+                  age:
+                    type: string
+                    description: 年齢
+                  department:
+                    type: string
+                    description: 部署
+                  comment:
+                    type: string
+                    description: コメント
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /comments/summary/{id}:
+    get:
+      tags:
+        - Comment
+      summary: コメント要約取得
+      description: コメントの要約を取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID
+          schema:
+            type: integer
+        - name: survey_category_id
+          in: query
+          required: true
+          description: カテゴリーID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  summary:
+                    type: string
+                    description: 要約
+                  keywords:
+                    type: array
+                    description: キーワード
+                    items:
+                      type: string
+                      description: キーワード
+                  count:
+                    type: integer
+                    description: 数
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /records/monthly/{id}:
+    get:
+      tags:
+        - Record
+      summary: 月次カルテ取得
+      description: 月次カルテを取得する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID
+          schema:
+            type: integer
+        - name: survey_category_id
+          in: query
+          required: true
+          description: カテゴリーID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  survey_title:
+                    type: string
+                    description: タイトル
+                  data:
+                    type: array
+                    description: データ
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                          description: 対象
+                        survey_date:
+                          type: string
+                          description: アンケート日
+                        response_period:
+                          type: integer
+                          description: 回答期間
+                        response_rate:
+                          type: number
+                          description: 回答率
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /charts/additional-question/pie/{survey_term_id}:
+    get:
+      tags:
+        - Chart
+      summary: 追加質問割合チャート取得
+      description: 追加質問割合チャートを取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: アンケートID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    month:
+                      type: string
+                      description: 年月
+                    data:
+                      type: array
+                      description: データ
+                      items:
+                        type: object
+                        properties:
+                          question:
+                            type: string
+                            description: 質問
+                          data:
+                            type: array
+                            description: データ
+                            items:
+                              type: object
+                              properties:
+                                answer:
+                                  type: string
+                                  description: はい or いいえ
+                                value:
+                                  type: number
+                                  description: 個数
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /charts/additional-question/ratio/transition/{survey_term_id}:
+    get:
+      tags:
+        - Chart
+      summary: 質問タイプ割合推移チャート取得
+      description: 質問タイプ割合推移チャートを取得する
+      parameters:
+        - name: survey_term_id
+          in: path
+          required: true
+          description: アンケートID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    month:
+                      type: string
+                      description: 年月
+                    "組織状態":
+                      type: number
+                      description: はいの割合
+                    "従業員エンゲージメント":
+                      type: number
+                      description: はいの割合
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /goals/{id}:
+    post:
+      tags:
+        - Goal
+      summary: 目標作成
+      description: 目標を作成する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company_id:
+                  type: integer
+                  description: 会社ID
+                improvement_point:
+                  type: string
+                  description: 改善項目
+                improvement_goal:
+                  type: number
+                  description: 目標
+                target:
+                  type: string
+                  description: 対象
+                start_date:
+                  type: string
+                  description: 開始日
+                end_date:
+                  type: string
+                  description: 終了日
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  company_id:
+                    type: integer
+                    description: 会社ID
+                  improvement_point:
+                    type: string
+                    description: 改善項目
+                  improvement_goal:
+                    type: number
+                    description: 目標
+                  target:
+                    type: string
+                    description: 対象
+                  start_date:
+                    type: string
+                    description: 開始日
+                  end_date:
+                    type: string
+                    description: 終了日
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /plans/{id}:
+    post:
+      tags:
+        - Plan
+      summary: 予定作成
+      description: 予定を作成する
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                survey_category_id:
+                  type: integer
+                  description: カテゴリーID
+                plan:
+                  type: string
+                  description: 施策
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID
+                  company_id:
+                    type: integer
+                    description: 会社ID
+                  plan_date:
+                    type: string
+                    description: 予定日
+                  plan_title:
+                    type: string
+                    description: 予定タイトル
+                  plan_detail:
+                    type: string
+                    description: 予定詳細
+                  plan_time:
+                    type: string
+                    description: 予定時間
+                  created_at:
+                    type: string
+                    description: 作成日時
+                  updated_at:
+                    type: string
+                    description: 更新日時
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
